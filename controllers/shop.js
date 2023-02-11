@@ -32,18 +32,24 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
-  Product.find()
-    .then(products => {
-      res.render('shop/index', {
-        prods: products,
-        pageTitle: 'Shop',
-        path: '/',
-        isAuthenticated: req.isLoggedIn
+  const { user, isLoggedIn } = req.session
+
+  if (isLoggedIn) {
+    Product.find()
+      .then(products => {
+        res.render('shop/index', {
+          prods: products,
+          pageTitle: 'Shop',
+          path: '/',
+          isAuthenticated: req.isLoggedIn
+        });
+      })
+      .catch(err => {
+        console.log(err);
       });
-    })
-    .catch(err => {
-      console.log(err);
-    });
+  } else {
+    res.redirect('/login')
+  }
 };
 
 exports.getCart = (req, res, next) => {
